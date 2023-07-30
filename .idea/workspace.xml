@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ed9f093f-f600-40a8-82da-659cdc0b151f" name="Changes" comment="">
+    <list default="true" id="ed9f093f-f600-40a8-82da-659cdc0b151f" name="Changes" comment="feat: Finish the project with Stack Data Structure and using recursive function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +15,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2T6OIdVaTsQz5sll7Bs4oZPWUGD" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -40,6 +43,7 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "SDKs",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
@@ -64,11 +68,24 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1690359987724</updated>
-      <workItem from="1690747930188" duration="6894000" />
+      <workItem from="1690747930188" duration="7480000" />
     </task>
+    <task id="LOCAL-00001" summary="feat: Finish the project with Stack Data Structure and using recursive function">
+      <option name="closed" value="true" />
+      <created>1690755105816</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1690755105816</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: Finish the project with Stack Data Structure and using recursive function" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Finish the project with Stack Data Structure and using recursive function" />
   </component>
 </project>

@@ -1,7 +1,6 @@
 Maze Solver Project By Kerem "Kensens" BOYLU
 
-#Türkçe
-NASIL ÇALIŞIR?
+`Türkçe` NASIL ÇALIŞIR?
 
 1. `maze.txt` Dosyasının İçeriğini Matrise Atamak:
    - Program, `readMaze` metodunda verilen `maze.txt` dosyasını okuyarak labirentin karakter dizisini (`maze`) oluşturur.
@@ -15,13 +14,13 @@ NASIL ÇALIŞIR?
 3. Tüm Olası Yolları Bulmak:
    - `findAllSolutions` metodunda, Labirentteki tüm olası çözümler aranır.
    - `findAllSolutions` metodunun başlangıç noktası olarak `startX` ve `startY` ile başlar.
-   - Labirentte hareket ederken ziyaret edilen hücreleri `visited` matrisiyle işaretler ve geçerli yolu (`currentPath`) bir yığıtta takip eder.
+   - Labirentte hareket ederken ziyaret edilen hücreleri `visited` matrisiyle işaretler ve geçerli yolu (`currentPath`) bir yığında takip eder.
    - Yol bulma sürecinde, her bir yöne (yukarı, aşağı, sağa, sola) özyineleme (recursive) çağrıları yapar ve tüm olası yolları keşfetmeye çalışır.
    - Eğer hedef hücre (`F`) ulaşılırsa, bu yol bir çözüm olarak `solutions` listesine eklenir.
 
 4. En Kısa Yolu İşaretlemek:
    - Tüm olası çözümler (`solutions`) elde edildikten sonra, bu çözümler arasından en kısa yol seçilir.
-   - En kısa yolun adım sayısı (`shortestSteps`) hesaplanır ve bu yolun yığıtı (`shortestSolution`) belirlenir.
+   - En kısa yolun adım sayısı (`shortestSteps`) hesaplanır ve bu yolun yığını (`shortestSolution`) belirlenir.
    - En kısa yol, `updateShortestPath` metodunu kullanarak labirent üzerinde `+` karakteri ile işaretlenir.
 
 5. Sonuçları Göstermek:
@@ -32,8 +31,7 @@ Bu proje, verilen labirent dosyasını okuyarak labirentteki olası çözümleri
 
 
 
-#English
-HOW DOES IT WORK?
+`English` HOW DOES IT WORK?
 
 1. Reading the Contents of the `maze.txt` File into a Matrix:
    - The program reads the `maze.txt` file and creates the character array representation of the maze (`maze`) in the `readMaze` method.
