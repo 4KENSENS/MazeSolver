@@ -1,190 +1,164 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Stack;
 
 public class Main {
+    public static void main(String[] args) {
+        try {
+            readMaze("maze.txt");
+            visited = new boolean[rows][columns];
 
-    private char[][] maze;
-    private int rows;
-    private int columns;
-    private List<List<int[]>> allPaths;
+            System.out.println("Maze:");
+            printMaze();
 
-    public Main(String filename) throws FileNotFoundException {
-        loadMaze(filename);
-    }
+            List<Stack<int[]>> allSolutions = findAllSolutions(startX, startY, 0, new Stack<>());
 
-    private void loadMaze(String filename) throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File(filename));
-        rows = 0;
-        columns = 0;
+            if (allSolutions.isEmpty()) {
+                System.out.println("No solution found!");
+            } else {
+                System.out.println("Number of solutions: " + allSolutions.size());
 
-        // Önce kaç satır ve kaç sütun olduğunu tespit edelim
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            rows++;
-            columns = line.length();
-        }
+                // Find the shortest solution
+                shortestSteps = Integer.MAX_VALUE;
+                shortestSolution = null;
 
-        scanner.close();
+                for (Stack<int[]> solution : allSolutions) {
+                    if (solution.peek()[2] < shortestSteps) {
+                        shortestSteps = solution.peek()[2];
+                        shortestSolution = solution;
+                    }
+                }
 
-        // Labirenti oluşturalım ve dosyayı tekrar okuyalım
-        maze = new char[rows][columns];
-        scanner = new Scanner(new File(filename));
-
-        int row = 0;
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            for (int col = 0; col < columns; col++) {
-                maze[row][col] = line.charAt(col);
+                System.out.println("Shortest solution steps: " + shortestSteps);
+                System.out.println("Shortest solution path:");
+                updateShortestPath(shortestSolution);
+                printMaze();
             }
-            row++;
+        } catch (IOException e) {
+            System.err.println("Error reading maze file: " + e.getMessage());
         }
-
-        scanner.close();
     }
 
-    public void solve() {
-        if (maze == null || rows == 0 || columns == 0) {
-            System.out.println("Labirent yüklenemedi.");
-            return;
+    // (Türkçe) Labirenti temsil eden karakter dizisi.
+    // (English) Character array representing the maze.
+    private static char[][] maze;
+    // (Türkçe) Labirentin satır ve sütun sayıları.
+    // (English) Number of rows and columns in the maze.
+    private static int rows;
+    private static int columns;
+    // (Türkçe) Labirentin başlangıç noktasının koordinatları.
+    // (English) Coordinates of the starting point of the maze.
+    private static int startX;
+    private static int startY;
+    // (Türkçe) Labirentteki tüm hücrelerin ziyaret edilip edilmediğini tutan matris.
+    // (English) Matrix that keeps whether all cells in the maze have been visited.
+    private static boolean[][] visited;
+    // (Türkçe) En kısa çözümün adım sayısı ve yolunu tutan değişkenler.
+    // (English) Variables that hold the number of steps and path of the shortest solution.
+    private static int shortestSteps;
+    private static Stack<int[]> shortestSolution;
+
+    // (Türkçe) Labirent dosyasını okuyarak labirenti oluşturan metot.
+    // (English) A method that reads the maze file to create the maze.
+    private static void readMaze(String filename) throws IOException {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(filename));
+            String line;
+            rows = 0;
+            while ((line = reader.readLine()) != null) {
+                columns = line.length();
+                rows++;
+            }
+            maze = new char[rows][columns];
+
+            // Read maze again to fill the maze array
+            reader = new BufferedReader(new FileReader(filename));
+            int row = 0;
+            while ((line = reader.readLine()) != null) {
+                for (int col = 0; col < columns; col++) {
+                    maze[row][col] = line.charAt(col);
+                    if (maze[row][col] == 'S') {
+                        startX = row;
+                        startY = col;
+                    }
+                }
+                row++;
+            }
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
         }
+    }
 
-        allPaths = new ArrayList<>();
-        boolean[][] visited = new boolean[rows][columns];
-
-        // Başlangıç noktasını (S) bulalım
-        int startX = -1, startY = -1;
+    // (Türkçe) Labirenti ekrana yazdıran metot.
+    // (English) A method that prints the maze to the screen.
+    private static void printMaze() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                if (maze[i][j] == 'S') {
-                    startX = i;
-                    startY = j;
-                    break;
-                }
+                System.out.print(maze[i][j]);
             }
-            if (startX != -1) {
-                break;
-            }
+            System.out.println();
         }
-
-        if (startX == -1) {
-            System.out.println("Başlangıç noktası (S) bulunamadı.");
-            return;
-        }
-
-        dfs(startX, startY, new ArrayList<>(), visited);
-        printAllPaths();
     }
 
-    private void dfs(int x, int y, List<int[]> path, boolean[][] visited) {
-        // Hedefe ulaşıldığında (F - çıkışa ulaşıldığında) labirent çözülmüş olacak
-        if (maze[x][y] == '#' || visited[x][y]) {
-            return;
-        }
-
-        // Hedefe ulaşıldı (F - çıkışa ulaşıldı)
-        if (maze[x][y] == 'F') {
-            path.add(new int[]{x, y});
-            allPaths.add(new ArrayList<>(path));
-            path.remove(path.size() - 1);
-            return;
+    // (Türkçe) Labirentteki tüm çözümleri bulan metot.
+    // (English) A method that finds all solutions in the maze.
+    private static List<Stack<int[]>> findAllSolutions(int x, int y, int step, Stack<int[]> currentPath) {
+        List<Stack<int[]>> solutions = new ArrayList<>();
+        if (x < 0 || x >= rows || y < 0 || y >= columns || maze[x][y] == '#' || visited[x][y]) {
+            // If the cell is invalid, visited before, or a wall,
+            // there is no path in this direction, so we return an empty solution list.
+            return solutions;
         }
 
         visited[x][y] = true;
-        path.add(new int[]{x, y});
 
-        // DFS'i tetikle
-        if (x > 0) {
-            dfs(x - 1, y, path, visited); // Yukarı git
-        }
-        if (x < rows - 1) {
-            dfs(x + 1, y, path, visited); // Aşağı git
-        }
-        if (y > 0) {
-            dfs(x, y - 1, path, visited); // Sol'a git
-        }
-        if (y < columns - 1) {
-            dfs(x, y + 1, path, visited); // Sağ'a git
-        }
-
-        // Hedefe ulaşılamadı, geri alalım
-        path.remove(path.size() - 1);
-        visited[x][y] = false;
-    }
-
-    private void printAllPaths() {
-        if (allPaths.isEmpty()) {
-            System.out.println("Labirent çözümü bulunamadı.");
+        if (maze[x][y] == 'F') {
+            Stack<int[]> solutionPath = new Stack<>();
+            solutionPath.addAll(currentPath);
+            solutionPath.push(new int[]{x, y, step});
+            solutions.add(solutionPath);
         } else {
-            int shortestPathLength = Integer.MAX_VALUE;
-            int shortestPathIndex = -1;
+            currentPath.push(new int[]{x, y, step});
 
-            int pathNumber = 1;
-            for (int i = 0; i < allPaths.size(); i++) {
-                List<int[]> path = allPaths.get(i);
-                char[][] solvedMaze = copyMaze(); // Labirenti çözmek için orijinal matristen bir kopya oluştur
+            // Move down
+            List<Stack<int[]>> downSolutions = findAllSolutions(x + 1, y, step + 1, currentPath);
+            solutions.addAll(downSolutions);
 
-                System.out.print("Yol " + pathNumber + ": ");
-                for (int[] cell : path) {
-                    int x = cell[0];
-                    int y = cell[1];
-                    solvedMaze[x][y] = '+';
-                    System.out.print("(" + x + "." + y + ") ");
-                }
+            // Move up
+            List<Stack<int[]>> upSolutions = findAllSolutions(x - 1, y, step + 1, currentPath);
+            solutions.addAll(upSolutions);
 
-                int pathLength = path.size();
-                System.out.println("\nYol Uzunluğu: " + pathLength);
+            // Move right
+            List<Stack<int[]>> rightSolutions = findAllSolutions(x, y + 1, step + 1, currentPath);
+            solutions.addAll(rightSolutions);
 
-                // En kısa yolu tespit et
-                if (pathLength < shortestPathLength) {
-                    shortestPathLength = pathLength;
-                    shortestPathIndex = i;
-                }
+            // Move left
+            List<Stack<int[]>> leftSolutions = findAllSolutions(x, y - 1, step + 1, currentPath);
+            solutions.addAll(leftSolutions);
 
-                // Çözülmüş labirenti ekrana yazdır
-                for (int j = 0; j < rows; j++) {
-                    for (int k = 0; k < columns; k++) {
-                        System.out.print(solvedMaze[j][k]);
-                    }
-                    System.out.println();
-                }
-
-                pathNumber++;
-            }
-
-            if (shortestPathIndex != -1) {
-                System.out.println("\nEn Kısa Yol Uzunluğu: " + shortestPathLength);
-                System.out.println("En Kısa Yol: ");
-                List<int[]> shortestPath = allPaths.get(shortestPathIndex);
-                for (int[] cell : shortestPath) {
-                    int x = cell[0];
-                    int y = cell[1];
-                    System.out.print("(" + x + "." + y + ") ");
-                }
-                // En kısa yolun indeksine göre yol numarasını belirle
-                int shortestPathNumber = shortestPathIndex+1;
-                System.out.println("\nEn Kısa Yol " + shortestPathNumber);
-            }
+            currentPath.pop();
         }
+
+        visited[x][y] = false;
+        return solutions;
     }
 
-
-    private char[][] copyMaze() {
-        char[][] copy = new char[rows][columns];
-        for (int i = 0; i < rows; i++) {
-            System.arraycopy(maze[i], 0, copy[i], 0, columns);
-        }
-        return copy;
-    }
-
-    public static void main(String[] args) {
-        try {
-            Main mazeSolver = new Main("maze.txt");
-            mazeSolver.solve();
-        } catch (FileNotFoundException e) {
-            System.out.println("Dosya bulunamadı: " + e.getMessage());
+    // (Türkçe) Labirentteki en kısa yolun çözümünü belirten metot.
+    // (English) A method that determines the shortest path in the maze.
+    private static void updateShortestPath(Stack<int[]> path) {
+        while (!path.isEmpty()) {
+            int[] step = path.pop();
+            int x = step[0];
+            int y = step[1];
+            if (maze[x][y] == '.') {
+                maze[x][y] = '+';
+            }
         }
     }
 }
